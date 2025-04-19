@@ -465,10 +465,27 @@ export default function HomePage() {
               <WaterUsageTrendChart />
 
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                <Card>
+                <Card className="bg-gradient-to-br from-blue-50 to-white dark:from-blue-950/40 dark:to-slate-900 border-blue-100 dark:border-blue-900 overflow-hidden">
                   <CardHeader className="pb-2 p-3 sm:p-6">
                     <div className="flex items-center justify-between">
-                      <CardTitle className="text-sm sm:text-base">節水排名</CardTitle>
+                      <CardTitle className="text-sm sm:text-base flex items-center">
+                        <span>節水排名</span>
+                        <HoverCard>
+                          <HoverCardTrigger asChild>
+                            <Button variant="ghost" size="icon" className="h-6 w-6 ml-1 p-1">
+                              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-slate-400">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <path d="M12 16v-4"></path>
+                                <path d="M12 8h.01"></path>
+                              </svg>
+                            </Button>
+                          </HoverCardTrigger>
+                          <HoverCardContent className="w-72 sm:w-80">
+                            <h4 className="text-sm font-semibold">節水排名說明</h4>
+                            <p className="text-xs sm:text-sm mt-1">您目前在您所在社區的節水排名，分數越高表示節水效果越好。位於前15%的用戶會獲得額外的水足跡點數獎勵。</p>
+                          </HoverCardContent>
+                        </HoverCard>
+                      </CardTitle>
                       <Badge
                         variant="outline"
                         className="text-green-600 border-green-200 bg-green-50 dark:bg-green-950 dark:border-green-800 text-xs"
@@ -479,61 +496,164 @@ export default function HomePage() {
                   </CardHeader>
                   <CardContent className="p-3 sm:p-6">
                     <div className="flex items-center justify-center py-3 sm:py-4">
-                      <div className="relative w-24 h-24 sm:w-32 sm:h-32 flex items-center justify-center">
-                        <svg className="w-24 h-24 sm:w-32 sm:h-32 transform -rotate-90">
+                      <div className="relative w-[144px] h-[144px] sm:w-[176px] sm:h-[176px]">
+                        <svg className="absolute inset-0 w-full h-full transform -rotate-90 drop-shadow-md" viewBox="0 0 144 144" preserveAspectRatio="xMidYMid meet">
+                          <defs>
+                            <linearGradient id="circleGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                              <stop offset="0%" stopColor="#3b82f6" />
+                              <stop offset="100%" stopColor="#60a5fa" />
+                            </linearGradient>
+                          </defs>
                           <circle
-                            cx="48"
-                            cy="48"
-                            r="36"
+                            cx="72"
+                            cy="72"
+                            r="66"
                             stroke="currentColor"
-                            strokeWidth="10"
+                            strokeWidth="12"
                             fill="transparent"
-                            className="text-blue-100 dark:text-blue-950"
+                            className="text-blue-100 dark:text-blue-900/60"
                           />
                           <circle
-                            cx="48"
-                            cy="48"
-                            r="36"
-                            stroke="currentColor"
-                            strokeWidth="10"
+                            cx="72"
+                            cy="72"
+                            r="66"
+                            stroke="url(#circleGradient)"
+                            strokeWidth="12"
                             fill="transparent"
-                            strokeDasharray="226.2"
-                            strokeDashoffset="33.93"
-                            className="text-blue-600 dark:text-blue-400"
-                          />
+                            strokeDasharray="414.7"
+                            strokeDashoffset="62.2"
+                            className="drop-shadow"
+                            strokeLinecap="round"
+                          >
+                            <animate 
+                              attributeName="stroke-dashoffset" 
+                              from="414.7" 
+                              to="62.2" 
+                              dur="1.5s" 
+                              fill="freeze" 
+                              calcMode="spline"
+                              keySplines="0.42 0 0.58 1"
+                            />
+                          </circle>
                         </svg>
-                        <div className="absolute inset-0 flex items-center justify-center">
-                          <span className="text-3xl sm:text-4xl font-bold">85</span>
+                        <div className="absolute top-0 left-0 w-full h-full flex flex-col items-center justify-center">
+                          <span className="text-4xl sm:text-5xl font-bold text-blue-600 dark:text-blue-400" 
+                                style={{ textShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>85</span>
+                          <span className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">優秀</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="flex justify-between items-center mt-2 px-2 sm:px-6">
+                      <div className="flex flex-col items-center">
+                        <span className="text-xs text-slate-500 dark:text-slate-400">社區平均</span>
+                        <span className="font-semibold text-sm sm:text-base">65</span>
+                      </div>
+                      <div className="flex flex-col items-center">
+                        <span className="text-xs text-slate-500 dark:text-slate-400">您的成績</span>
+                        <span className="font-semibold text-sm sm:text-base text-blue-600 dark:text-blue-400">85</span>
+                      </div>
+                      <div className="flex flex-col items-center">
+                        <span className="text-xs text-slate-500 dark:text-slate-400">目標</span>
+                        <span className="font-semibold text-sm sm:text-base">90</span>
+                      </div>
+                    </div>
+                  </CardContent>
+                  <CardFooter className="pt-0 justify-center p-3 sm:p-6 bg-blue-50/50 dark:bg-blue-900/20 border-t border-blue-100 dark:border-blue-900/60">
+                    <div className="flex items-center text-center">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-blue-500 mr-2">
+                        <path d="m5 12 5 5 9-9"></path>
+                      </svg>
+                      <p className="text-xs sm:text-sm text-slate-700 dark:text-slate-300">在您的社區中表現優異</p>
+                    </div>
+                  </CardFooter>
+                </Card>
+
+                <Card className="bg-gradient-to-br from-green-50 to-white dark:from-green-950/40 dark:to-slate-900 border-green-100 dark:border-green-900 overflow-hidden">
+                  <CardHeader className="pb-2 p-3 sm:p-6">
+                    <div className="flex items-center justify-between">
+                      <CardTitle className="text-sm sm:text-base flex items-center">
+                        <span>環保貢獻</span>
+                        <HoverCard>
+                          <HoverCardTrigger asChild>
+                            <Button variant="ghost" size="icon" className="h-6 w-6 ml-1 p-1">
+                              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-slate-400">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <path d="M12 16v-4"></path>
+                                <path d="M12 8h.01"></path>
+                              </svg>
+                            </Button>
+                          </HoverCardTrigger>
+                          <HoverCardContent className="w-72 sm:w-80">
+                            <h4 className="text-sm font-semibold">環保貢獻說明</h4>
+                            <p className="text-xs sm:text-sm mt-1">您的節水行為所帶來的環保效益，包括減少的碳排放量。每節省1,000公升水約可減少1公斤的碳排放。</p>
+                          </HoverCardContent>
+                        </HoverCard>
+                      </CardTitle>
+                      <Badge className="bg-gradient-to-r from-green-500 to-emerald-600 text-xs">A 級</Badge>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="p-3 sm:p-6">
+                    <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 py-3 sm:py-4">
+                      <div className="relative inline-flex items-center justify-center">
+                        <div className="absolute inset-0 bg-green-400/10 rounded-full animate-ping opacity-75" style={{ animationDuration: '3s' }}></div>
+                        <div className="relative z-10 p-4 sm:p-5 bg-gradient-to-br from-green-100 to-green-50 dark:from-green-900/60 dark:to-green-800/30 rounded-full shadow-lg border border-green-200 dark:border-green-700">
+                          <div className="relative">
+                            <Zap className="h-12 w-12 sm:h-14 sm:w-14 text-green-500 dark:text-green-400" />
+                            <div className="absolute -top-1 -right-1 h-4 w-4 bg-green-100 dark:bg-green-900 rounded-full flex items-center justify-center border-2 border-green-500">
+                              <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="text-green-600 dark:text-green-400">
+                                <path d="m5 12 5 5 9-9"></path>
+                              </svg>
+                      </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="text-center sm:text-left">
+                        <p className="text-sm sm:text-base text-slate-600 dark:text-slate-300">減少碳排放</p>
+                        <div className="flex items-baseline justify-center sm:justify-start">
+                          <p className="font-bold text-2xl sm:text-3xl mt-1 text-green-600 dark:text-green-400 mr-2">32</p>
+                          <p className="font-medium text-lg text-green-600/80 dark:text-green-400/80">公斤CO₂</p>
+                        </div>
+                        <div className="mt-1 text-xs inline-flex items-center px-2 py-1 rounded-full bg-green-100 dark:bg-green-900/60 text-green-700 dark:text-green-300">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-1">
+                            <path d="m5 12 7-7 7 7"></path>
+                            <path d="M12 19V5"></path>
+                          </svg>
+                          較上月增加 15%
+                        </div>
+                      </div>
+                    </div>
+                    <div className="mt-4 bg-green-50 dark:bg-green-900/30 rounded-lg p-3">
+                      <div className="grid grid-cols-2 gap-3">
+                        <div className="flex flex-col items-center">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-green-600 dark:text-green-400 mb-1">
+                            <path d="M7 22a5 5 0 0 1-2-10"></path>
+                            <path d="M14 22a5 5 0 0 0 2-10"></path>
+                            <path d="M11 2a5 5 0 0 0-2 10"></path>
+                            <path d="M14 5a5 5 0 0 1-2 10"></path>
+                          </svg>
+                          <p className="text-[10px] sm:text-xs text-slate-500 dark:text-slate-400">節省水資源</p>
+                          <p className="font-medium text-xs sm:text-sm">8,240 L</p>
+                        </div>
+                        <div className="flex flex-col items-center">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-green-600 dark:text-green-400 mb-1">
+                            <path d="M12 7c-1.9 0-3.5 1.6-3.5 3.5 0 1.9 1.6 3.5 3.5 3.5 1.9 0 3.5-1.6 3.5-3.5 0-1.9-1.6-3.5-3.5-3.5z"></path>
+                            <path d="M5 21q2.5-5.5 7-5.5t7 5.5"></path>
+                            <path d="M7.8 10.5c-.5-1.7-1.8-3.2-3.5-3.8a5.9 5.9 0 0 0-2 6.3"></path>
+                            <path d="M16.2 10.5c.5-1.7 1.8-3.2 3.5-3.8a5.9 5.9 0 0 1 2 6.3"></path>
+                          </svg>
+                          <p className="text-[10px] sm:text-xs text-slate-500 dark:text-slate-400">相當於種植</p>
+                          <p className="font-medium text-xs sm:text-sm">1.5 棵樹</p>
                         </div>
                       </div>
                     </div>
                   </CardContent>
-                  <CardFooter className="pt-0 justify-center p-3 sm:p-6">
-                    <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">在您的社區中表現優異</p>
-                  </CardFooter>
-                </Card>
-
-                <Card>
-                  <CardHeader className="pb-2 p-3 sm:p-6">
-                    <div className="flex items-center justify-between">
-                      <CardTitle className="text-sm sm:text-base">環保貢獻</CardTitle>
-                      <Badge className="bg-green-600 text-xs">A 級</Badge>
-                    </div>
-                  </CardHeader>
-                  <CardContent className="p-3 sm:p-6">
-                    <div className="flex items-center justify-center py-3 sm:py-4">
-                      <div className="inline-flex items-center justify-center p-4 sm:p-5 bg-green-50 dark:bg-green-950 rounded-full mb-3">
-                        <Zap className="h-8 w-8 sm:h-10 sm:w-10 text-green-600 dark:text-green-400" />
-                      </div>
-                      <div>
-                        <p className="text-sm text-slate-500 dark:text-slate-400">減少碳排放</p>
-                        <p className="font-bold text-xl sm:text-2xl mt-1">32 公斤CO₂</p>
-                      </div>
-                    </div>
-                  </CardContent>
-                  <CardFooter className="pt-0 justify-center p-3 sm:p-6">
-                    <Button variant="link" className="text-green-600 dark:text-green-400 h-8 text-xs sm:text-sm">
-                      查看詳情
+                  <CardFooter className="pt-0 justify-center p-3 sm:p-6 border-t border-green-100 dark:border-green-900/60">
+                    <Button variant="outline" className="bg-white dark:bg-slate-900 border-green-200 dark:border-green-800 text-green-600 dark:text-green-400 hover:bg-green-50 dark:hover:bg-green-900/40 h-8 text-xs sm:text-sm shadow-sm">
+                      查看環保成效詳情
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="ml-1">
+                        <path d="M5 12h14"></path>
+                        <path d="m12 5 7 7-7 7"></path>
+                      </svg>
                     </Button>
                   </CardFooter>
                 </Card>
