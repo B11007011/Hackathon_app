@@ -100,11 +100,11 @@ export default function HomePage() {
 
   return (
     <WaterPointsContext.Provider value={{ waterPoints, setWaterPoints, redemptionHistory, handleRedeemPoints }}>
-    <div className="h-screen w-screen overflow-hidden bg-background flex flex-col">
-      <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 flex-shrink-0">
-        <div className="container flex h-16 sm:h-20 items-center px-4">
-          <div className="flex items-center gap-1 sm:gap-3 font-bold text-xl sm:text-2xl text-blue-600 dark:text-blue-400">
-            <Droplets className="h-6 w-6 sm:h-8 sm:w-8" />
+    <div className="flex flex-col h-full w-full bg-background">
+      <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 flex-shrink-0 pt-safe">
+        <div className="container flex h-14 items-center px-4">
+          <div className="flex items-center gap-1 sm:gap-3 font-bold text-lg sm:text-xl text-blue-600 dark:text-blue-400">
+            <Droplets className="h-5 w-5 sm:h-6 sm:w-6" />
             <span>WaterWise</span>
           </div>
           <div className="flex items-center ml-auto gap-2 sm:gap-4">
@@ -257,30 +257,30 @@ export default function HomePage() {
         </div>
       </header>
 
-      <main className="flex-1 relative">
-        <ScrollArea className="h-[calc(100vh-4rem)] sm:h-[calc(100vh-5rem)] w-full">
-          <div className="container px-3 sm:px-4 py-4 sm:py-6 pb-20 sm:pb-6">
-            <div className="mb-6 sm:mb-8">
-              <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white mb-1 sm:mb-2">水足跡載具系統</h1>
-              <p className="text-sm sm:text-base text-slate-500 dark:text-slate-400">追蹤您的消費水足跡，獲取環保獎勵</p>
+      <main className="flex-1 overflow-hidden relative">
+        <ScrollArea className="h-full w-full" style={{ paddingBottom: "calc(env(safe-area-inset-bottom) + 48px)" }}>
+          <div className="container px-3 sm:px-4 py-3 sm:py-4 pb-16">
+            <div className="mb-4 sm:mb-6">
+              <h1 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white mb-1">水足跡載具系統</h1>
+              <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">追蹤您的消費水足跡，獲取環保獎勵</p>
             </div>
 
-            <div className="grid gap-4 sm:gap-6">
+            <div className="grid gap-3 sm:gap-4">
               {/* Hero Banner */}
               <div className="relative overflow-hidden rounded-xl">
                 <img
                   src="https://images.pexels.com/photos/1001682/pexels-photo-1001682.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
                   alt="Water conservation"
-                  className="w-full h-36 sm:h-48 object-cover"
+                  className="w-full h-28 sm:h-36 object-cover"
                 />
               </div>
 
               <Card className="border-blue-100 dark:border-blue-900 overflow-hidden">
-                <CardHeader className="pb-2 bg-blue-600 text-white p-3 sm:p-6">
-                  <CardTitle className="text-base sm:text-lg">本月節水成果</CardTitle>
-                  <CardDescription className="text-xs sm:text-sm text-blue-100">2023年10月</CardDescription>
+                <CardHeader className="pb-2 bg-blue-600 text-white p-3">
+                  <CardTitle className="text-sm sm:text-base">本月節水成果</CardTitle>
+                  <CardDescription className="text-xs text-blue-100">2023年10月</CardDescription>
                 </CardHeader>
-                <CardContent className="pt-4 sm:pt-6 p-3 sm:p-6">
+                <CardContent className="pt-3 p-3">
                   <div className="flex justify-between items-center mb-2">
                     <span className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">已節省水量</span>
                     <HoverCard>
@@ -963,43 +963,43 @@ export default function HomePage() {
       </main>
 
       {/* Fixed bottom navigation for mobile */}
-      <div className="fixed bottom-0 left-0 right-0 z-50 border-t bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sm:hidden flex-shrink-0">
+      <div className="fixed bottom-0 left-0 right-0 z-50 border-t bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sm:hidden flex-shrink-0 pb-safe">
         <div className="w-full">
-          <div className="items-center justify-center p-1 text-muted-foreground grid grid-cols-4 h-16 bg-transparent rounded-none border-0">
+          <div className="items-center justify-center p-0.5 text-muted-foreground grid grid-cols-4 h-12 bg-transparent rounded-none border-0">
             <button 
               onClick={() => handleTabChange("home")} 
-              className={`inline-flex items-center justify-center whitespace-nowrap px-3 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 rounded-lg ${activeTab === "home" ? "text-blue-600" : ""}`}
+              className={`inline-flex items-center justify-center whitespace-nowrap px-2 py-1 text-xs font-medium ring-offset-background transition-all focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50 rounded-md ${activeTab === "home" ? "text-blue-600" : ""}`}
             >
               <div className="flex flex-col items-center">
-                <Home className="h-5 w-5" />
-                <span className="text-xs mt-1">首頁</span>
+                <Home className="h-4 w-4" />
+                <span className="text-[10px] mt-0.5">首頁</span>
               </div>
             </button>
             <button 
               onClick={() => handleTabChange("receipts")} 
-              className={`inline-flex items-center justify-center whitespace-nowrap px-3 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 rounded-lg ${activeTab === "receipts" ? "text-blue-600" : ""}`}
+              className={`inline-flex items-center justify-center whitespace-nowrap px-2 py-1 text-xs font-medium ring-offset-background transition-all focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50 rounded-md ${activeTab === "receipts" ? "text-blue-600" : ""}`}
             >
               <div className="flex flex-col items-center">
-                <Receipt className="h-5 w-5" />
-                <span className="text-xs mt-1">載具</span>
+                <Receipt className="h-4 w-4" />
+                <span className="text-[10px] mt-0.5">載具</span>
               </div>
             </button>
             <button 
               onClick={() => handleTabChange("rewards")} 
-              className={`inline-flex items-center justify-center whitespace-nowrap px-3 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 rounded-lg ${activeTab === "rewards" ? "text-blue-600" : ""}`}
+              className={`inline-flex items-center justify-center whitespace-nowrap px-2 py-1 text-xs font-medium ring-offset-background transition-all focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50 rounded-md ${activeTab === "rewards" ? "text-blue-600" : ""}`}
             >
               <div className="flex flex-col items-center">
-                <Award className="h-5 w-5" />
-                <span className="text-xs mt-1">獎勵</span>
+                <Award className="h-4 w-4" />
+                <span className="text-[10px] mt-0.5">獎勵</span>
               </div>
             </button>
             <button 
               onClick={() => handleTabChange("profile")} 
-              className={`inline-flex items-center justify-center whitespace-nowrap px-3 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 rounded-lg ${activeTab === "profile" ? "text-blue-600" : ""}`}
+              className={`inline-flex items-center justify-center whitespace-nowrap px-2 py-1 text-xs font-medium ring-offset-background transition-all focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50 rounded-md ${activeTab === "profile" ? "text-blue-600" : ""}`}
             >
               <div className="flex flex-col items-center">
-                <User className="h-5 w-5" />
-                <span className="text-xs mt-1">個人</span>
+                <User className="h-4 w-4" />
+                <span className="text-[10px] mt-0.5">個人</span>
               </div>
             </button>
           </div>
@@ -1008,13 +1008,13 @@ export default function HomePage() {
 
       {/* Toast notification for redemption */}
       {showRedemptionToast && (
-        <div className="fixed bottom-20 sm:bottom-5 right-5 bg-green-100 dark:bg-green-900 border border-green-200 dark:border-green-800 shadow-lg rounded-lg p-4 max-w-sm z-50 animate-in fade-in slide-in-from-bottom-5">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-green-500 flex items-center justify-center shrink-0">
+        <div className="fixed bottom-20 sm:bottom-5 right-5 bg-green-100 dark:bg-green-900 border border-green-200 dark:border-green-800 shadow-lg rounded-lg p-3 max-w-xs z-50 animate-in fade-in slide-in-from-bottom-5 mb-safe">
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 rounded-full bg-green-500 flex items-center justify-center shrink-0">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                width="20"
-                height="20"
+                width="16"
+                height="16"
                 viewBox="0 0 24 24"
                 fill="none"
                 stroke="currentColor"
@@ -1027,9 +1027,9 @@ export default function HomePage() {
               </svg>
             </div>
             <div>
-              <p className="font-medium text-green-800 dark:text-green-200">兌換成功！</p>
-              <p className="text-sm text-green-700 dark:text-green-300">
-                您已成功兌換 {redemptionInfo.title}，消耗了 {redemptionInfo.points} WaterPoints。
+              <p className="font-medium text-xs text-green-800 dark:text-green-200">兌換成功！</p>
+              <p className="text-xs text-green-700 dark:text-green-300">
+                您已成功兌換 {redemptionInfo.title}，消耗 {redemptionInfo.points} Points
               </p>
             </div>
           </div>

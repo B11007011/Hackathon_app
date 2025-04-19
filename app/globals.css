@@ -7,15 +7,80 @@ html {
   width: 100%;
   margin: 0;
   padding: 0;
-  overflow: hidden;
+  -webkit-overflow-scrolling: touch;
 }
 
 body {
   font-family: Arial, Helvetica, sans-serif;
-  height: 100vh;
+  height: 100%;
+  width: 100%;
   margin: 0;
   padding: 0;
-  overflow: hidden;
+  -webkit-text-size-adjust: 100%;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+}
+
+/* Custom container padding override */
+.container.px-3.sm\:px-4.py-3.sm\:py-4.pb-16 {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+/* Add iPhone safe area padding support for all models */
+@supports (padding: max(0px)) {
+  .pt-safe {
+    padding-top: max(0px, env(safe-area-inset-top));
+  }
+  .pr-safe {
+    padding-right: max(0px, env(safe-area-inset-right));
+  }
+  .pb-safe {
+    padding-bottom: max(0px, env(safe-area-inset-bottom));
+  }
+  .pl-safe {
+    padding-left: max(0px, env(safe-area-inset-left));
+  }
+  .px-safe {
+    padding-left: max(0px, env(safe-area-inset-left));
+    padding-right: max(0px, env(safe-area-inset-right));
+  }
+  .py-safe {
+    padding-top: max(0px, env(safe-area-inset-top));
+    padding-bottom: max(0px, env(safe-area-inset-bottom));
+  }
+}
+
+/* Fix for smaller iPhones (SE, mini models) */
+@media screen and (max-width: 375px) {
+  .text-xs {
+    font-size: 0.65rem;
+  }
+  h1, .text-2xl {
+    font-size: 1.25rem !important;
+  }
+  .text-xl {
+    font-size: 1.1rem !important;
+  }
+  .h-36 {
+    height: 6rem !important;
+  }
+  .h-28 {
+    height: 5rem !important;
+  }
+  .h-12 {
+    height: 2.75rem !important;
+  }
+  .pb-16 {
+    padding-bottom: 4rem !important;
+  }
+}
+
+/* Fix for medium-sized phones (iPhone 12/13) */
+@media screen and (min-width: 376px) and (max-width: 390px) {
+  .pb-16 {
+    padding-bottom: 4.5rem !important;
+  }
 }
 
 @layer utilities {
