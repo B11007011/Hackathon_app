@@ -8,13 +8,24 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Input } from "@/components/ui/input"
 import { Droplet, Filter, LogOut, Menu } from "lucide-react"
+import { IndustryPieChart } from "./components/IndustryPieChart"
+import { RegionBarChart } from "./components/RegionBarChart"
+import { ProductCategoryChart } from "./components/ProductCategoryChart"
+import { CompanyTrendChart } from "./components/CompanyTrendChart"
+import { PolicySimulationChart } from "./components/PolicySimulationChart"
+import { EfficiencyTrendChart } from "./components/EfficiencyTrendChart"
 
 export default function GovernmentPage() {
   const router = useRouter()
   const [activeTab, setActiveTab] = useState("overview")
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   const handleSignOut = () => {
     router.push("/")
+  }
+
+  const toggleMobileMenu = () => {
+    setMobileMenuOpen(!mobileMenuOpen)
   }
 
   return (
@@ -26,16 +37,72 @@ export default function GovernmentPage() {
             <Droplet className="h-6 w-6" />
             <h1 className="text-xl font-bold">WaterWise 政府版</h1>
           </div>
-          <div className="flex items-center gap-4">
-            <span>水資源管理局</span>
+          <div className="flex items-center gap-2 sm:gap-4">
+            <span className="hidden sm:inline">水資源管理局</span>
             <Button variant="ghost" size="icon" onClick={handleSignOut} className="text-white hover:bg-teal-800">
               <LogOut className="h-5 w-5" />
             </Button>
-            <Menu className="h-5 w-5 cursor-pointer" />
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              onClick={toggleMobileMenu}
+              className="sm:hidden text-white hover:bg-teal-800"
+            >
+              <Menu className="h-5 w-5 cursor-pointer" />
+            </Button>
           </div>
         </div>
-        <div className="bg-teal-800">
-          <div className="container mx-auto py-2">
+        
+        {/* Mobile menu */}
+        {mobileMenuOpen && (
+          <div className="sm:hidden bg-teal-800 py-2 px-4">
+            <nav className="flex flex-col space-y-2">
+              <Button 
+                variant="ghost" 
+                className="justify-start text-white hover:bg-teal-600"
+                onClick={() => {
+                  setActiveTab("overview");
+                  setMobileMenuOpen(false);
+                }}
+              >
+                全國概覽
+              </Button>
+              <Button 
+                variant="ghost" 
+                className="justify-start text-white hover:bg-teal-600"
+                onClick={() => {
+                  setActiveTab("categories");
+                  setMobileMenuOpen(false);
+                }}
+              >
+                產品類別分析
+              </Button>
+              <Button 
+                variant="ghost" 
+                className="justify-start text-white hover:bg-teal-600"
+                onClick={() => {
+                  setActiveTab("companies");
+                  setMobileMenuOpen(false);
+                }}
+              >
+                企業用水監測
+              </Button>
+              <Button 
+                variant="ghost" 
+                className="justify-start text-white hover:bg-teal-600"
+                onClick={() => {
+                  setActiveTab("simulation");
+                  setMobileMenuOpen(false);
+                }}
+              >
+                政策模擬
+              </Button>
+            </nav>
+          </div>
+        )}
+        
+        <div className="bg-teal-800 hidden sm:block">
+          <div className="container mx-auto py-2 overflow-x-auto">
             <Tabs defaultValue="overview" className="w-full">
               <TabsList className="bg-transparent h-9">
                 <TabsTrigger
@@ -73,15 +140,15 @@ export default function GovernmentPage() {
       </header>
 
       {/* Main Content */}
-      <main className="container mx-auto p-6">
+      <main className="container mx-auto px-4 py-6">
         {activeTab === "overview" && (
           <>
             <div className="mb-6">
-              <h2 className="text-2xl font-bold mb-2">全國水資源使用概覽</h2>
+              <h2 className="text-xl sm:text-2xl font-bold mb-2">全國水資源使用概覽</h2>
               <p className="text-gray-500">2023年10月資料</p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 mb-6">
               <Card>
                 <CardHeader className="pb-2">
                   <CardTitle className="text-lg">全國企業總用水量</CardTitle>
@@ -149,10 +216,8 @@ export default function GovernmentPage() {
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="flex items-center justify-center">
-                    <div className="w-full max-w-xs aspect-square bg-gray-100 rounded-md flex items-center justify-center">
-                      <div className="text-center text-gray-500">台灣地圖視覺化</div>
-                    </div>
+                  <div className="w-full h-[300px]">
+                    <RegionBarChart />
                   </div>
 
                   <div>
@@ -247,10 +312,8 @@ export default function GovernmentPage() {
                   <CardDescription>按產業類別分析</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <div className="flex items-center justify-center mb-6">
-                    <div className="w-full max-w-xs aspect-square bg-gray-100 rounded-md flex items-center justify-center">
-                      <div className="text-center text-gray-500">產業用水圓餅圖</div>
-                    </div>
+                  <div className="w-full h-[300px] mb-6">
+                    <IndustryPieChart />
                   </div>
 
                   <div className="space-y-2">
@@ -462,39 +525,8 @@ export default function GovernmentPage() {
                   <CardDescription>各類產品平均用水量</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <div className="h-80 bg-white rounded-md flex items-end justify-between px-2">
-                    <div className="flex flex-col items-center">
-                      <div className="w-12 bg-teal-500 rounded-t-sm" style={{ height: "10%" }}></div>
-                      <span className="text-xs text-gray-500 mt-1">洗髮精</span>
-                    </div>
-                    <div className="flex flex-col items-center">
-                      <div className="w-12 bg-teal-500 rounded-t-sm" style={{ height: "60%" }}></div>
-                      <span className="text-xs text-gray-500 mt-1">T恤</span>
-                    </div>
-                    <div className="flex flex-col items-center">
-                      <div className="w-12 bg-teal-500 rounded-t-sm" style={{ height: "90%" }}></div>
-                      <span className="text-xs text-gray-500 mt-1">筆電</span>
-                    </div>
-                    <div className="flex flex-col items-center">
-                      <div className="w-12 bg-teal-500 rounded-t-sm" style={{ height: "2%" }}></div>
-                      <span className="text-xs text-gray-500 mt-1">寶特瓶</span>
-                    </div>
-                    <div className="flex flex-col items-center">
-                      <div className="w-12 bg-teal-500 rounded-t-sm" style={{ height: "25%" }}></div>
-                      <span className="text-xs text-gray-500 mt-1">手機</span>
-                    </div>
-                    <div className="flex flex-col items-center">
-                      <div className="w-12 bg-teal-500 rounded-t-sm" style={{ height: "65%" }}></div>
-                      <span className="text-xs text-gray-500 mt-1">牛仔褲</span>
-                    </div>
-                    <div className="flex flex-col items-center">
-                      <div className="w-12 bg-teal-500 rounded-t-sm" style={{ height: "5%" }}></div>
-                      <span className="text-xs text-gray-500 mt-1">洗碗精</span>
-                    </div>
-                    <div className="flex flex-col items-center">
-                      <div className="w-12 bg-teal-500 rounded-t-sm" style={{ height: "50%" }}></div>
-                      <span className="text-xs text-gray-500 mt-1">洗衣機</span>
-                    </div>
+                  <div className="w-full h-[300px]">
+                    <ProductCategoryChart />
                   </div>
                 </CardContent>
               </Card>
@@ -505,8 +537,8 @@ export default function GovernmentPage() {
                   <CardDescription>過去12個月平均用水量變化</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <div className="h-80 bg-white rounded-md flex items-center justify-center">
-                    <div className="text-center text-gray-500">產品用水效率趨勢圖</div>
+                  <div className="w-full h-[300px]">
+                    <EfficiencyTrendChart />
                   </div>
                 </CardContent>
               </Card>
@@ -650,8 +682,8 @@ export default function GovernmentPage() {
               <CardContent>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <div className="h-64 bg-white rounded-md flex items-center justify-center">
-                      <div className="text-center text-gray-500">企業用水趨勢圖</div>
+                    <div className="w-full h-[240px]">
+                      <CompanyTrendChart />
                     </div>
                   </div>
 
@@ -839,8 +871,8 @@ export default function GovernmentPage() {
                 <CardDescription>政策實施後5年內的預測趨勢</CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="h-64 bg-white rounded-md flex items-center justify-center mb-4">
-                  <div className="text-center text-gray-500">長期影響預測圖表</div>
+                <div className="w-full h-[300px] mb-4">
+                  <PolicySimulationChart />
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">

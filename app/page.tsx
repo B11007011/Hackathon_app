@@ -266,6 +266,29 @@ export default function HomePage() {
             </div>
 
             <div className="grid gap-3 sm:gap-4">
+              {/* WaterWise Feature Card */}
+              <Card className="border-blue-100 dark:border-blue-900 overflow-hidden bg-gradient-to-r from-blue-50 to-cyan-50 dark:from-blue-950 dark:to-cyan-950">
+                <CardContent className="p-4 flex items-center justify-between">
+                  <div>
+                    <div className="flex items-center gap-2 mb-2">
+                      <div className="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center">
+                        <Droplets className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+                      </div>
+                      <div>
+                        <h3 className="font-bold text-base sm:text-lg">水足跡分析儀表板</h3>
+                        <p className="text-xs text-slate-500 dark:text-slate-400">全新功能！追蹤您的水足跡，節省資源</p>
+                      </div>
+                    </div>
+                    <Badge className="bg-green-500 hover:bg-green-600">新功能</Badge>
+                  </div>
+                  <Link href="/waterwise">
+                    <Button className="bg-blue-600 hover:bg-blue-700">
+                      立即體驗
+                    </Button>
+                  </Link>
+                </CardContent>
+              </Card>
+
               {/* Hero Banner */}
               <div className="relative overflow-hidden rounded-xl">
                 <img

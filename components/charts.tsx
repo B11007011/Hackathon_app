@@ -19,84 +19,63 @@ import {
   Tooltip,
   XAxis,
   YAxis,
+  ComposedChart,
 } from "recharts"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
 import { useState, useEffect } from 'react'
 
 // Water Usage Trend Chart
-export function WaterUsageTrendChart() {
-  const [mounted, setMounted] = useState(false);
-  
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+export function WaterUsageTrendChart({ timeframe = "weekly" }: { timeframe?: "weekly" | "monthly" }) {
+  // Sample data
+  const weeklyData = [
+    { name: "第1週", usage: 950, average: 1000 },
+    { name: "第2週", usage: 890, average: 1000 },
+    { name: "第3週", usage: 920, average: 1000 },
+    { name: "第4週", usage: 860, average: 1000 },
+    { name: "第5週", usage: 830, average: 1000 },
+    { name: "本週", usage: 820, average: 1000 },
+  ];
 
-  const waterUsageData = [
-    { month: '5月', usage: 1950, average: 2300 },
-    { month: '6月', usage: 1800, average: 2300 },
-    { month: '7月', usage: 1650, average: 2300 },
-    { month: '8月', usage: 1730, average: 2300 },
-    { month: '9月', usage: 1500, average: 2300 },
-    { month: '10月', usage: 1240, average: 2300 },
-  ]
+  const monthlyData = [
+    { name: "5月", usage: 4500, average: 4200 },
+    { name: "6月", usage: 4300, average: 4200 },
+    { name: "7月", usage: 4600, average: 4200 },
+    { name: "8月", usage: 4100, average: 4200 },
+    { name: "9月", usage: 3900, average: 4200 },
+    { name: "10月", usage: 3850, average: 4200 },
+  ];
 
-  // Apply CSS variables for chart colors
-  useEffect(() => {
-    document.documentElement.style.setProperty('--color-usage', '#3b82f6');
-    document.documentElement.style.setProperty('--color-average', '#94a3b8');
-  }, []);
+  const data = timeframe === "weekly" ? weeklyData : monthlyData;
 
   return (
-    <Card>
-      <CardHeader className="pb-2 p-3 sm:p-6">
-        <CardTitle className="text-sm sm:text-base">水足跡用量趨勢</CardTitle>
-      </CardHeader>
-      <CardContent className="p-0 sm:p-0">
-        {mounted ? (
-          <div className="h-[300px] w-full pt-3 sm:pt-4">
-            <ResponsiveContainer width="100%" height="100%">
-              <LineChart
-                data={waterUsageData}
-                margin={{ top: 10, right: 30, left: 20, bottom: 20 }}
-              >
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="month" />
-                <YAxis />
-                <Tooltip 
-                  formatter={(value, name) => [
-                    `${value} L`, 
-                    name === 'usage' ? '您的用量' : '平均用量'
-                  ]}
-                  labelFormatter={(label) => `${label}`}
-                />
-                <Line 
-                  type="monotone" 
-                  dataKey="usage" 
-                  stroke="var(--color-usage)" 
-                  strokeWidth={2}
-                  activeDot={{ r: 8 }}
-                  name="usage"
-                />
-                <Line 
-                  type="monotone" 
-                  dataKey="average" 
-                  stroke="var(--color-average)" 
-                  strokeWidth={2} 
-                  strokeDasharray="5 5"
-                  name="average"
-                />
-              </LineChart>
-            </ResponsiveContainer>
-          </div>
-        ) : (
-          <div className="h-[300px] w-full flex items-center justify-center">
-            <div className="text-sm text-muted-foreground">Loading chart...</div>
-          </div>
-        )}
-      </CardContent>
-    </Card>
-  )
+    <ResponsiveContainer width="100%" height="100%">
+      <BarChart data={data}>
+        <CartesianGrid strokeDasharray="3 3" vertical={false} />
+        <XAxis dataKey="name" tick={{ fontSize: 12 }} />
+        <YAxis tick={{ fontSize: 12 }} width={40} />
+        <Tooltip 
+          formatter={(value) => [`${value} 公升`, null]}
+          labelFormatter={(label) => `${label}用水量`}
+        />
+        <Legend />
+        <Bar 
+          dataKey="usage" 
+          name="實際用水量" 
+          fill="#3b82f6" 
+          radius={[4, 4, 0, 0]} 
+        />
+        <Line 
+          type="monotone" 
+          dataKey="average" 
+          stroke="#ef4444" 
+          name="目標用水量" 
+          dot={false} 
+          strokeWidth={2}
+        />
+      </BarChart>
+    </ResponsiveContainer>
+  );
 }
 
 // Product Category Water Footprint Chart
@@ -180,105 +159,58 @@ export function WaterTaxAllocationChart() {
 
 // Environmental Impact Radar Chart
 export function EnvironmentalImpactChart() {
-  const [mounted, setMounted] = useState(false);
-  
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  const environmentalData = [
-    { subject: '節水量', A: 80, B: 60, fullMark: 100 },
-    { subject: '減碳量', A: 75, B: 60, fullMark: 100 },
-    { subject: '資源循環', A: 60, B: 55, fullMark: 100 },
-    { subject: '生態保護', A: 70, B: 50, fullMark: 100 },
-    { subject: '綠色消費', A: 80, B: 60, fullMark: 100 },
-    { subject: '環保意識', A: 90, B: 70, fullMark: 100 },
+  // Sample data
+  const data = [
+    { name: "6月", saving: 850, carbon: 15 },
+    { name: "7月", saving: 920, carbon: 17 },
+    { name: "8月", saving: 980, carbon: 18 },
+    { name: "9月", saving: 1150, carbon: 21 },
+    { name: "10月", saving: 1240, carbon: 24.5 },
   ];
 
-  // Custom render for polar angle axis labels to make them responsive
-  const renderPolarAngleAxis = (props: any) => {
-    const { cx, cy, payload, x, y } = props;
-    return (
-      <g className="recharts-polar-angle-axis-tick">
-        <text 
-          x={x} 
-          y={y} 
-          textAnchor="middle" 
-          className="text-xs sm:text-sm" 
-          fill="currentColor" 
-          style={{ fontSize: 'var(--font-size, 10px)' }}
-        >
-          {payload.value}
-        </text>
-      </g>
-    );
-  };
-
   return (
-    <Card>
-      <CardHeader className="pb-2 p-3 sm:p-6">
-        <CardTitle className="text-sm sm:text-base">環保影響雷達圖</CardTitle>
-      </CardHeader>
-      <CardContent className="p-0 sm:p-0">
-        {mounted ? (
-          <div className="h-[320px] sm:h-[350px] w-full flex justify-center pt-0 sm:pt-4">
-            <ResponsiveContainer width="100%" height="100%">
-              <RadarChart 
-                cx="50%" 
-                cy="50%" 
-                outerRadius="60%" 
-                data={environmentalData}
-                margin={{ top: 0, right: 15, bottom: 25, left: 15 }}
-              >
-                <PolarGrid gridType="circle" />
-                <PolarAngleAxis 
-                  dataKey="subject" 
-                  tick={renderPolarAngleAxis}
-                  tickLine={false}
-                  style={{ fontSize: '10px' }}
-                />
-                <PolarRadiusAxis tickCount={4} />
-                <Tooltip 
-                  formatter={(value, name) => [
-                    `${value}`, 
-                    name === "您的表現" ? "您的表現" : "平均水平"
-                  ]}
-                  labelFormatter={(label) => `${label}`}
-                  contentStyle={{ fontSize: '12px' }}
-                />
-                <Radar 
-                  name="您的表現" 
-                  dataKey="A" 
-                  stroke="#3b82f6" 
-                  fill="#3b82f6" 
-                  fillOpacity={0.6} 
-                />
-                <Radar 
-                  name="平均水平" 
-                  dataKey="B" 
-                  stroke="#10b981" 
-                  fill="#10b981" 
-                  fillOpacity={0.6} 
-                />
-                <Legend 
-                  align="center" 
-                  verticalAlign="bottom" 
-                  iconSize={8} 
-                  wrapperStyle={{ 
-                    fontSize: '12px',
-                    paddingTop: '8px',
-                    paddingBottom: '16px'
-                  }} 
-                />
-              </RadarChart>
-            </ResponsiveContainer>
-          </div>
-        ) : (
-          <div className="h-[320px] sm:h-[350px] w-full flex items-center justify-center">
-            <div className="text-sm text-muted-foreground">Loading chart...</div>
-          </div>
-        )}
-      </CardContent>
-    </Card>
-  )
+    <ResponsiveContainer width="100%" height="100%">
+      <ComposedChart data={data}>
+        <CartesianGrid strokeDasharray="3 3" vertical={false} />
+        <XAxis dataKey="name" tick={{ fontSize: 12 }} />
+        <YAxis 
+          yAxisId="left" 
+          orientation="left" 
+          tick={{ fontSize: 12 }} 
+          width={40}
+          domain={[0, 'dataMax + 200']}
+        />
+        <YAxis 
+          yAxisId="right" 
+          orientation="right" 
+          tick={{ fontSize: 12 }} 
+          width={40}
+          domain={[0, 'dataMax + 5']}
+        />
+        <Tooltip 
+          formatter={(value, name) => {
+            if (name === "節省水量") return [`${value} 公升`, name];
+            if (name === "減少碳排放") return [`${value} 公斤`, name];
+            return [value, name];
+          }}
+        />
+        <Legend />
+        <Bar 
+          yAxisId="left" 
+          dataKey="saving" 
+          name="節省水量" 
+          fill="#3b82f6" 
+          radius={[4, 4, 0, 0]} 
+        />
+        <Line 
+          yAxisId="right" 
+          type="monotone" 
+          dataKey="carbon" 
+          name="減少碳排放" 
+          stroke="#10b981" 
+          strokeWidth={2}
+        />
+      </ComposedChart>
+    </ResponsiveContainer>
+  );
 }
