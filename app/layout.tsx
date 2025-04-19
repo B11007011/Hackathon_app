@@ -14,11 +14,11 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="zh-TW">
+    <html lang="zh-TW" className="h-full overflow-hidden">
       <head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
       </head>
-      <body>{children}</body>
+      <body className="h-full overflow-hidden">{children}</body>
     </html>
   )
 }

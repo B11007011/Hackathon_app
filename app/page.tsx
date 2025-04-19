@@ -37,21 +37,71 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { Drawer, DrawerContent, DrawerTrigger } from "@/components/ui/drawer"
+import { Drawer, DrawerContent, DrawerTrigger, DrawerHeader, DrawerTitle } from "@/components/ui/drawer"
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel"
 import { WaterUsageTrendChart, EnvironmentalImpactChart } from "@/components/charts"
-import { useState, useEffect } from "react"
+import { useState, useEffect, createContext, useContext } from "react"
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+
+// Create context for water points
+interface WaterPointsContextType {
+  waterPoints: number;
+  setWaterPoints: React.Dispatch<React.SetStateAction<number>>;
+  redemptionHistory: {
+    type: string;
+    description: string;
+    date: string;
+    points: number;
+  }[];
+  handleRedeemPoints: (title: string, points: number) => void;
+}
+
+const WaterPointsContext = createContext<WaterPointsContextType | null>(null);
 
 export default function HomePage() {
   const [activeTab, setActiveTab] = useState("receipts");
+  const [waterPoints, setWaterPoints] = useState(132);
+  const [showRedemptionToast, setShowRedemptionToast] = useState(false);
+  const [redemptionInfo, setRedemptionInfo] = useState({ title: '', points: 0 });
+  const [redemptionHistory, setRedemptionHistory] = useState([
+    { type: "earn", description: "購買節水商品", date: "2023/10/15", points: 3 },
+    { type: "earn", description: "購買節水商品", date: "2023/10/10", points: 5 },
+    { type: "spend", description: "折抵水費", date: "2023/10/01", points: 10 }
+  ]);
 
   const handleTabChange = (value: string) => {
     setActiveTab(value);
   };
 
+  const handleRedeemPoints = (title: string, points: number) => {
+    if (waterPoints >= points) {
+      // Update points
+      setWaterPoints(prev => prev - points);
+      
+      // Add to history
+      const now = new Date();
+      const formattedDate = `${now.getFullYear()}/${(now.getMonth() + 1).toString().padStart(2, '0')}/${now.getDate().toString().padStart(2, '0')}`;
+      
+      setRedemptionHistory(prev => [
+        { type: "spend", description: title, date: formattedDate, points: points },
+        ...prev
+      ]);
+      
+      // Show toast
+      setRedemptionInfo({ title, points });
+      setShowRedemptionToast(true);
+      
+      // Close toast after 3 seconds
+      setTimeout(() => {
+        setShowRedemptionToast(false);
+      }, 3000);
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-background">
-      <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <WaterPointsContext.Provider value={{ waterPoints, setWaterPoints, redemptionHistory, handleRedeemPoints }}>
+    <div className="h-screen w-screen overflow-hidden bg-background flex flex-col">
+      <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 flex-shrink-0">
         <div className="container flex h-16 sm:h-20 items-center px-4">
           <div className="flex items-center gap-1 sm:gap-3 font-bold text-xl sm:text-2xl text-blue-600 dark:text-blue-400">
             <Droplets className="h-6 w-6 sm:h-8 sm:w-8" />
@@ -89,14 +139,14 @@ export default function HomePage() {
                 </Button>
               </DrawerTrigger>
               <DrawerContent className="max-h-[85vh]">
-                <div className="p-4 pb-0">
+                <DrawerHeader>
+                  <DrawerTitle>通知</DrawerTitle>
                   <div className="flex items-center justify-between">
-                    <h3 className="text-lg font-semibold">通知</h3>
                     <Button variant="ghost" size="sm">
                       全部標為已讀
                     </Button>
                   </div>
-                </div>
+                </DrawerHeader>
                 <ScrollArea className="h-[50vh] px-4">
                   <div className="space-y-4 py-4">
                     <div className="flex gap-3 bg-blue-50 dark:bg-blue-900/20 p-3 rounded-lg">
@@ -207,8 +257,8 @@ export default function HomePage() {
         </div>
       </header>
 
-      <main className="flex-1">
-        <ScrollArea className="h-[calc(100vh-4rem)] sm:h-[calc(100vh-5rem)]">
+      <main className="flex-1 relative">
+        <ScrollArea className="h-[calc(100vh-4rem)] sm:h-[calc(100vh-5rem)] w-full">
           <div className="container px-3 sm:px-4 py-4 sm:py-6 pb-20 sm:pb-6">
             <div className="mb-6 sm:mb-8">
               <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white mb-1 sm:mb-2">水足跡載具系統</h1>
@@ -267,12 +317,147 @@ export default function HomePage() {
                   <div>
                     <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">累積點數</p>
                     <p className="font-bold text-lg sm:text-xl text-blue-600 dark:text-blue-400">
-                      132 <span className="text-xs sm:text-sm font-normal">WaterPoints</span>
+                      {waterPoints} <span className="text-xs sm:text-sm font-normal">WaterPoints</span>
                     </p>
                   </div>
-                  <Button className="bg-blue-600 hover:bg-blue-700 h-9 text-xs sm:text-sm">
-                    兌換獎勵
-                  </Button>
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <Button className="bg-blue-600 hover:bg-blue-700 h-9 text-xs sm:text-sm">
+                        兌換獎勵
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="sm:max-w-md">
+                      <DialogHeader>
+                        <DialogTitle>兌換水足跡獎勵</DialogTitle>
+                        <DialogDescription>
+                          選擇您想兌換的獎勵，目前您有 {waterPoints} WaterPoints。
+                        </DialogDescription>
+                      </DialogHeader>
+                      <div className="space-y-4 my-4 max-h-[60vh] overflow-y-auto pr-1">
+                        <Card className="overflow-hidden">
+                          <div className="flex h-full">
+                            <div className="bg-blue-100 dark:bg-blue-900 p-3 sm:p-4 flex items-center justify-center">
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="24"
+                                height="24"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="2"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                className="text-blue-600 dark:text-blue-400 w-6 h-6 sm:w-8 sm:h-8"
+                              >
+                                <path d="M12 22V8"></path>
+                                <path d="m5 12 7-4 7 4"></path>
+                                <path d="M5 16l7-4 7 4"></path>
+                                <path d="M5 20l7-4 7 4"></path>
+                              </svg>
+                            </div>
+                            <CardContent className="p-3 sm:p-4 flex-1 flex justify-between items-center">
+                              <div>
+                                <h4 className="font-medium text-sm sm:text-base">水費折抵</h4>
+                                <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">折抵下期水費帳單</p>
+                                <p className="text-[10px] sm:text-xs text-blue-600 dark:text-blue-400 mt-1">需要 15 WaterPoints</p>
+                              </div>
+                              <Button 
+                                className="bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-800 h-8 sm:h-9 text-xs sm:text-sm"
+                                onClick={() => handleRedeemPoints("水費折抵", 15)}
+                                disabled={waterPoints < 15}
+                              >
+                                兌換
+                              </Button>
+                            </CardContent>
+                          </div>
+                        </Card>
+
+                        <Card className="overflow-hidden">
+                          <div className="flex h-full">
+                            <div className="bg-purple-100 dark:bg-purple-900 p-3 sm:p-4 flex items-center justify-center">
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="24"
+                                height="24"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="2"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                className="text-purple-600 dark:text-purple-400 w-6 h-6 sm:w-8 sm:h-8"
+                              >
+                                <path d="M20 12V8H6a2 2 0 0 1-2-2c0-1.1.9-2 2-2h12v4"></path>
+                                <path d="M4 11v3a1 1 0 0 0 1 1h3"></path>
+                                <path d="M14 15v2a1 1 0 0 1-1 1h-2"></path>
+                                <path d="M9 22h6"></path>
+                                <path d="M4 15h2"></path>
+                              </svg>
+                            </div>
+                            <CardContent className="p-3 sm:p-4 flex-1 flex justify-between items-center">
+                              <div>
+                                <h4 className="font-medium text-sm sm:text-base">市民卡點數</h4>
+                                <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">轉換為市民卡點數</p>
+                                <p className="text-[10px] sm:text-xs text-purple-600 dark:text-purple-400 mt-1">需要 10 WaterPoints</p>
+                              </div>
+                              <Button 
+                                className="bg-purple-600 hover:bg-purple-700 dark:bg-purple-700 dark:hover:bg-purple-800 h-8 sm:h-9 text-xs sm:text-sm"
+                                onClick={() => handleRedeemPoints("市民卡點數", 10)}
+                                disabled={waterPoints < 10}
+                              >
+                                兌換
+                              </Button>
+                            </CardContent>
+                          </div>
+                        </Card>
+
+                        <Card className="overflow-hidden">
+                          <div className="flex h-full">
+                            <div className="bg-green-100 dark:bg-green-900 p-3 sm:p-4 flex items-center justify-center">
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="24"
+                                height="24"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="2"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                className="text-green-600 dark:text-green-400 w-6 h-6 sm:w-8 sm:h-8"
+                              >
+                                <path d="M8 3v2"></path>
+                                <path d="M16 3v2"></path>
+                                <path d="M21 6H3"></path>
+                                <path d="M11 18H3a2 2 0 0 1-2-2V6c0-1.1.9-2 2-2"></path>
+                                <path d="M16 16h-2a2 2 0 0 0-2 2v2a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2v-2a2 2 0 0 0-2-2z"></path>
+                                <path d="M18 12h2a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2h-2a2 2 0 0 1-2-2v-6a2 2 0 0 1 2-2z"></path>
+                              </svg>
+                            </div>
+                            <CardContent className="p-3 sm:p-4 flex-1 flex justify-between items-center">
+                              <div>
+                                <h4 className="font-medium text-sm sm:text-base">捷運點數</h4>
+                                <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">轉換為捷運搭乘點數</p>
+                                <p className="text-[10px] sm:text-xs text-green-600 dark:text-green-400 mt-1">需要 20 WaterPoints</p>
+                              </div>
+                              <Button 
+                                className="bg-green-600 hover:bg-green-700 dark:bg-green-700 dark:hover:bg-green-800 h-8 sm:h-9 text-xs sm:text-sm"
+                                onClick={() => handleRedeemPoints("捷運點數", 20)}
+                                disabled={waterPoints < 20}
+                              >
+                                兌換
+                              </Button>
+                            </CardContent>
+                          </div>
+                        </Card>
+                      </div>
+                      <DialogFooter className="sm:justify-start">
+                        <div className="w-full text-center sm:text-left text-xs text-slate-500 dark:text-slate-400">
+                          點數兌換後無法退還，請確認您的選擇。
+                        </div>
+                      </DialogFooter>
+                    </DialogContent>
+                  </Dialog>
                 </CardFooter>
               </Card>
 
@@ -658,7 +843,7 @@ export default function HomePage() {
       </main>
 
       {/* Fixed bottom navigation for mobile */}
-      <div className="fixed bottom-0 left-0 right-0 z-50 border-t bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sm:hidden">
+      <div className="fixed bottom-0 left-0 right-0 z-50 border-t bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sm:hidden flex-shrink-0">
         <div className="w-full">
           <div className="items-center justify-center p-1 text-muted-foreground grid grid-cols-4 h-16 bg-transparent rounded-none border-0">
             <button 
@@ -700,7 +885,38 @@ export default function HomePage() {
           </div>
         </div>
       </div>
+
+      {/* Toast notification for redemption */}
+      {showRedemptionToast && (
+        <div className="fixed bottom-20 sm:bottom-5 right-5 bg-green-100 dark:bg-green-900 border border-green-200 dark:border-green-800 shadow-lg rounded-lg p-4 max-w-sm z-50 animate-in fade-in slide-in-from-bottom-5">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-full bg-green-500 flex items-center justify-center shrink-0">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="text-white"
+              >
+                <path d="M20 6L9 17l-5-5"></path>
+              </svg>
+            </div>
+            <div>
+              <p className="font-medium text-green-800 dark:text-green-200">兌換成功！</p>
+              <p className="text-sm text-green-700 dark:text-green-300">
+                您已成功兌換 {redemptionInfo.title}，消耗了 {redemptionInfo.points} WaterPoints。
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
+    </WaterPointsContext.Provider>
   )
 }
 
@@ -1010,6 +1226,14 @@ function ReceiptDetail() {
 }
 
 function RewardsPage() {
+  const context = useContext(WaterPointsContext);
+  
+  if (!context) {
+    throw new Error("RewardsPage must be used within a WaterPointsContext.Provider");
+  }
+  
+  const { waterPoints, redemptionHistory, handleRedeemPoints } = context;
+  
   return (
     <div className="space-y-4 sm:space-y-6">
       <Card className="overflow-hidden">
@@ -1019,7 +1243,7 @@ function RewardsPage() {
             <div>
               <p className="text-xs sm:text-sm opacity-80">累積點數</p>
               <div className="flex items-baseline">
-                <p className="text-3xl sm:text-4xl font-bold">132</p>
+                <p className="text-3xl sm:text-4xl font-bold">{waterPoints}</p>
                 <p className="text-xs sm:text-sm ml-1">WaterPoints</p>
               </div>
             </div>
@@ -1032,9 +1256,15 @@ function RewardsPage() {
             <div className="flex justify-between items-center">
               <div>
                 <p className="text-xs sm:text-sm">可折抵水費</p>
-                <p className="text-xl sm:text-2xl font-bold">NT$ 26.4</p>
+                <p className="text-xl sm:text-2xl font-bold">NT$ {(waterPoints * 0.2).toFixed(1)}</p>
               </div>
-              <Button size="sm" variant="secondary" className="bg-white/30 hover:bg-white/40 border-0 h-8 text-xs sm:text-sm">
+              <Button 
+                size="sm" 
+                variant="secondary" 
+                className="bg-white/30 hover:bg-white/40 border-0 h-8 text-xs sm:text-sm"
+                onClick={() => handleRedeemPoints("水費折抵", 15)}
+                disabled={waterPoints < 15}
+              >
                 立即折抵
               </Button>
             </div>
@@ -1048,9 +1278,14 @@ function RewardsPage() {
             </Button>
           </div>
           <div className="space-y-2 sm:space-y-3 mt-2 sm:mt-3">
-            <div className="flex items-center justify-between py-2 border-b dark:border-slate-700">
+            {redemptionHistory.slice(0, 3).map((item, index) => (
+              <div key={index} className="flex items-center justify-between py-2 border-b dark:border-slate-700">
               <div className="flex items-center">
-                <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-green-100 dark:bg-green-900 flex items-center justify-center mr-2 sm:mr-3">
+                  <div className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full ${
+                    item.type === "earn" 
+                      ? "bg-green-100 dark:bg-green-900" 
+                      : "bg-red-100 dark:bg-red-900"
+                  } flex items-center justify-center mr-2 sm:mr-3`}>
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="14"
@@ -1061,71 +1296,38 @@ function RewardsPage() {
                     strokeWidth="2"
                     strokeLinecap="round"
                     strokeLinejoin="round"
-                    className="text-green-600 dark:text-green-400"
+                      className={item.type === "earn" 
+                        ? "text-green-600 dark:text-green-400"
+                        : "text-red-600 dark:text-red-400"
+                      }
                   >
+                      {item.type === "earn" ? (
+                        <>
                     <path d="m5 12 7-7 7 7"></path>
                     <path d="M12 19V5"></path>
-                  </svg>
-                </div>
-                <div>
-                  <p className="font-medium text-xs sm:text-sm">購買節水商品</p>
-                  <p className="text-[10px] sm:text-xs text-slate-500 dark:text-slate-400">2023/10/15</p>
-                </div>
-              </div>
-              <span className="text-green-600 dark:text-green-400 font-medium text-xs sm:text-sm">+3</span>
-            </div>
-            <div className="flex items-center justify-between py-2 border-b dark:border-slate-700">
-              <div className="flex items-center">
-                <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-green-100 dark:bg-green-900 flex items-center justify-center mr-2 sm:mr-3">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="14"
-                    height="14"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    className="text-green-600 dark:text-green-400"
-                  >
-                    <path d="m5 12 7-7 7 7"></path>
-                    <path d="M12 19V5"></path>
-                  </svg>
-                </div>
-                <div>
-                  <p className="font-medium text-xs sm:text-sm">購買節水商品</p>
-                  <p className="text-[10px] sm:text-xs text-slate-500 dark:text-slate-400">2023/10/10</p>
-                </div>
-              </div>
-              <span className="text-green-600 dark:text-green-400 font-medium text-xs sm:text-sm">+5</span>
-            </div>
-            <div className="flex items-center justify-between py-2">
-              <div className="flex items-center">
-                <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-red-100 dark:bg-red-900 flex items-center justify-center mr-2 sm:mr-3">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="14"
-                    height="14"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    className="text-red-600 dark:text-red-400"
-                  >
+                        </>
+                      ) : (
+                        <>
                     <path d="m19 12-7 7-7-7"></path>
                     <path d="M12 5v14"></path>
+                        </>
+                      )}
                   </svg>
                 </div>
                 <div>
-                  <p className="font-medium text-xs sm:text-sm">折抵水費</p>
-                  <p className="text-[10px] sm:text-xs text-slate-500 dark:text-slate-400">2023/10/01</p>
+                    <p className="font-medium text-xs sm:text-sm">{item.description}</p>
+                    <p className="text-[10px] sm:text-xs text-slate-500 dark:text-slate-400">{item.date}</p>
                 </div>
               </div>
-              <span className="text-red-600 dark:text-red-400 font-medium text-xs sm:text-sm">-10</span>
+                <span className={`font-medium text-xs sm:text-sm ${
+                  item.type === "earn" 
+                    ? "text-green-600 dark:text-green-400" 
+                    : "text-red-600 dark:text-red-400"
+                }`}>
+                  {item.type === "earn" ? "+" : "-"}{item.points}
+                </span>
             </div>
+            ))}
           </div>
         </CardContent>
       </Card>
@@ -1159,7 +1361,13 @@ function RewardsPage() {
                 <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">直接折抵下期水費帳單</p>
                 <p className="text-[10px] sm:text-xs text-blue-600 dark:text-blue-400 mt-1">1 WaterPoint = NT$ 0.2</p>
               </div>
-              <Button className="bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-800 h-8 sm:h-9 text-xs sm:text-sm">兌換</Button>
+              <Button 
+                className="bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-800 h-8 sm:h-9 text-xs sm:text-sm"
+                onClick={() => handleRedeemPoints("水費折抵", 15)}
+                disabled={waterPoints < 15}
+              >
+                兌換
+              </Button>
             </CardContent>
           </div>
         </Card>
