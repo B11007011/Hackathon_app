@@ -19,6 +19,7 @@ body {
   -webkit-text-size-adjust: 100%;
   -webkit-tap-highlight-color: transparent;
   -webkit-touch-callout: none;
+  overflow: hidden;
 }
 
 /* Custom container padding override */
@@ -80,6 +81,17 @@ body {
 @media screen and (min-width: 376px) and (max-width: 390px) {
   .pb-16 {
     padding-bottom: 4.5rem !important;
+  }
+}
+
+/* Hide scrollbar for mobile devices while keeping content scrollable */
+@media (max-width: 767px) {
+  .hide-scrollbar {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+  }
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;  /* Chrome, Safari and Opera */
   }
 }
 

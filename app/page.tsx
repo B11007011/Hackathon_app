@@ -147,7 +147,7 @@ export default function HomePage() {
                     </Button>
                   </div>
                 </DrawerHeader>
-                <ScrollArea className="h-[50vh] px-4">
+                <ScrollArea className="h-[50vh] px-4 hide-scrollbar">
                   <div className="space-y-4 py-4">
                     <div className="flex gap-3 bg-blue-50 dark:bg-blue-900/20 p-3 rounded-lg">
                       <div className="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center shrink-0">
@@ -258,7 +258,7 @@ export default function HomePage() {
       </header>
 
       <main className="flex-1 overflow-hidden relative">
-        <ScrollArea className="h-full w-full" style={{ paddingBottom: "calc(env(safe-area-inset-bottom) + 48px)" }}>
+        <ScrollArea className="h-full w-full hide-scrollbar" style={{ paddingBottom: "calc(env(safe-area-inset-bottom) + 48px)" }}>
           <div className="container px-3 sm:px-4 py-3 sm:py-4 pb-16">
             <div className="mb-4 sm:mb-6">
               <h1 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white mb-1">水足跡載具系統</h1>
